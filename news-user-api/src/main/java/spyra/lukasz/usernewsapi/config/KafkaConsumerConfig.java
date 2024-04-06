@@ -22,12 +22,18 @@ public class KafkaConsumerConfig {
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
 
+  @Value("${spring.kafka.topic.json}")
+  private String jsonTopic;
+
+  @Value("${spring.kafka.topic.avro}")
+  private String avroTopic;
+
   public Map<String, Object> consumerConfig() {
     HashMap<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     props.put(ConsumerConfig.GROUP_ID_CONFIG, "message-group");
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    props.put(DelegatingByTopicDeserializer.VALUE_SERIALIZATION_TOPIC_CONFIG, "json-topic:" + JsonDeserializer.class + ", avro-topic:" + KafkaAvroDeserializer.class);
+    props.put(DelegatingByTopicDeserializer.VALUE_SERIALIZATION_TOPIC_CONFIG, jsonTopic + ":" + JsonDeserializer.class + ", " + avroTopic + ":" + KafkaAvroDeserializer.class);
     return props;
   }
 

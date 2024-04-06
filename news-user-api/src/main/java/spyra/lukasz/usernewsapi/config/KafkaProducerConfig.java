@@ -20,6 +20,12 @@ public class KafkaProducerConfig {
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
 
+  @Value("${spring.kafka.topic.json}")
+  private String jsonTopic;
+
+  @Value("${spring.kafka.topic.avro}")
+  private String avroTopic;
+
   public ProducerFactory<String, String> producerFactory() {
     return new DefaultKafkaProducerFactory<>(producerConfig());
   }
@@ -28,7 +34,7 @@ public class KafkaProducerConfig {
     Map<String, Object> props = new HashMap<>();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    props.put(DelegatingByTopicSerializer.VALUE_SERIALIZATION_TOPIC_CONFIG, "json-topic:" + JsonSerializer.class + ", avro-topic:" + KafkaAvroSerializer.class);
+    props.put(DelegatingByTopicSerializer.VALUE_SERIALIZATION_TOPIC_CONFIG, jsonTopic + ":" + JsonSerializer.class + ", " + avroTopic + ":" + KafkaAvroSerializer.class);
     return props;
   }
 
