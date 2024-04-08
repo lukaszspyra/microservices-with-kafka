@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
+/**
+ * Creates topics for publishing
+ */
 @Configuration
 public class KafkaTopicConfig {
 
@@ -19,21 +22,6 @@ public class KafkaTopicConfig {
   @Bean
   public NewTopic newsRequestTopic() {
     return TopicBuilder.name(topicNameProvider.newsRequest()).replicas(1).partitions(3).build();
-  }
-
-  @Bean
-  public NewTopic newsResponseTopic() {
-    return TopicBuilder.name(topicNameProvider.newsResponse()).replicas(1).partitions(3).build();
-  }
-
-  @Bean
-  public NewTopic jsonTopic() {
-    return TopicBuilder.name(topicNameProvider.jsonTopic()).replicas(1).partitions(3).build();
-  }
-
-  @Bean
-  public NewTopic avroTopic() {
-    return TopicBuilder.name(topicNameProvider.avroTopic()).replicas(1).partitions(3).build();
   }
 
 }
