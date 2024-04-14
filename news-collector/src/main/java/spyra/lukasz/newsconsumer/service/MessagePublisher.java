@@ -16,6 +16,7 @@ public class MessagePublisher implements MessageService {
   public void publishResponseMessage(String topic, String date, final String body) {
     ProducerRecord<String, String> record = new ProducerRecord<>(topic, date, body);
     kafkaTemplate.send(record);
+    System.out.printf("Pushed message to KAFKA topic %s: %s%n", topic, date);
   }
 
 }
