@@ -15,17 +15,17 @@ public class KafkaListeners {
   private String newsResponse;
 
   private final NewsRepository newsRepository;
-  private final KafkaTopicNameProvider topicNameProvider;
+  public final KafkaTopicNameProvider kafkaTopicNameProvider;
 
-  public KafkaListeners(final NewsRepository newsRepository, final KafkaTopicNameProvider topicNameProvider) {
+  public KafkaListeners(final NewsRepository newsRepository, final KafkaTopicNameProvider kafkaTopicNameProvider) {
     this.newsRepository = newsRepository;
-    this.topicNameProvider = topicNameProvider;
+    this.kafkaTopicNameProvider = kafkaTopicNameProvider;
   }
 
 
-  @KafkaListener(topics = "#{topicNameProvider.newsResponse()}", groupId = "message-group-2")
+  @KafkaListener(topics = {"#{kafkaTopicNameProvider.newsResponse()}"}, groupId = "message-group-2")
   void newsResponseListener(ConsumerRecord<String, String> consumerRecord) {
-    System.out.printf("cached listener received: %s%n", consumerRecord.key());
+    System.out.printf("KAFKA response listener received: %s%n", consumerRecord.key());
     try {
       newsRepository.saveNews(consumerRecord.key(), consumerRecord.value())
           .subscribe(isSaved -> {

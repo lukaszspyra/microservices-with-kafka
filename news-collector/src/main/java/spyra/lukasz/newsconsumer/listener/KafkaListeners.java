@@ -16,25 +16,25 @@ public class KafkaListeners {
 
   private final MessageService messageService;
 
-  private final KafkaTopicNameProvider topicNameProvider;
+  private final KafkaTopicNameProvider kafkaTopicNameProvider;
 
-  public KafkaListeners(final WebClientService webClientService, final WebClientService webClientService1, final MessageService messageService, final KafkaTopicNameProvider topicNameProvider) {
-    this.webClientService = webClientService1;
+  public KafkaListeners(final WebClientService webClientService, final MessageService messageService, final KafkaTopicNameProvider kafkaTopicNameProvider) {
+    this.webClientService = webClientService;
     this.messageService = messageService;
-    this.topicNameProvider = topicNameProvider;
+    this.kafkaTopicNameProvider = kafkaTopicNameProvider;
   }
 
 
-  @KafkaListener(topics = "#{topicNameProvider.newsRequest()}", groupId = "message-group")
+  @KafkaListener(topics = {"#{kafkaTopicNameProvider.newsRequest()}"}, groupId = "message-group")
   void newsRequestListener(String date) {
-    System.out.printf("listener received: %s%n", date);
+    System.out.printf("KAFKA request listener received: %s%n", date);
     Mono<ResponseEntity<String>> responseEntity = webClientService.sendRequest(date);
 
     responseEntity.subscribe(response -> {
       HttpStatus status = (HttpStatus) response.getStatusCode();
       if (status.equals(HttpStatus.OK)) {
         System.out.println("Data successfully fetched from external API, publishing to string response topic");
-        messageService.publishResponseMessage(topicNameProvider.newsResponse(), date, response.getBody());
+        messageService.publishResponseMessage(kafkaTopicNameProvider.newsResponse(), date, response.getBody());
       } else {
         System.out.println("Data fetch failed");
       }

@@ -21,11 +21,11 @@ public class KafkaTopicNameProvider {
   @Value("${spring.kafka.topic.avro}")
   private String avroTopic;
 
-  String newsRequest() {
+  public String newsRequest() {
     return newsRequest;
   }
 
-  String newsResponse() {
+  public String newsResponse() {
     return newsResponse;
   }
 
