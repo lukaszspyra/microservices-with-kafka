@@ -7,16 +7,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import spyra.lukasz.usernewsapi.dto.Article;
 import spyra.lukasz.usernewsapi.dto.response.DataResponse;
+import spyra.lukasz.usernewsapi.service.JsonPublisher;
 import spyra.lukasz.usernewsapi.service.MessageService;
 
 @RestController
 @RequestMapping
 public class MessageController {
   private final MessageService service;
+  private final JsonPublisher publisher;
 
-  public MessageController(MessageService service) {
+  public MessageController(MessageService service, final JsonPublisher publisher) {
     this.service = service;
+    this.publisher = publisher;
   }
 
   @GetMapping("/news")
@@ -33,8 +37,14 @@ public class MessageController {
   }
 
   @GetMapping
-  public String healthCheck(){
+  public String healthCheck() {
     return "healthy";
+  }
+
+  @GetMapping("/news-json")
+  public void publishJson() {
+    Article article = new Article("Some test Author", "Some test Title", "Exiting test news");
+    publisher.publishJsonMessage(article);
   }
 
 }
