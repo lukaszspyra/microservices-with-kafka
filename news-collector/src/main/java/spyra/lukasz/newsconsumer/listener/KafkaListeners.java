@@ -6,6 +6,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import spyra.lukasz.newsconsumer.config.KafkaTopicNameProvider;
+import spyra.lukasz.newsconsumer.dto.Article;
 import spyra.lukasz.newsconsumer.service.MessageService;
 import spyra.lukasz.newsconsumer.service.WebClientService;
 
@@ -25,6 +26,11 @@ public class KafkaListeners {
   }
 
 
+  @KafkaListener(topics = {"#{kafkaTopicNameProvider.jsonTopic()}"}, groupId = "message-group")
+  void newsJsonListener(Article article) {
+    System.out.printf("KAFKA json listener received: %s%n", article);
+  }
+
   @KafkaListener(topics = {"#{kafkaTopicNameProvider.newsRequest()}"}, groupId = "message-group")
   void newsRequestListener(String date) {
     System.out.printf("KAFKA request listener received: %s%n", date);
@@ -40,5 +46,4 @@ public class KafkaListeners {
       }
     });
   }
-
 }

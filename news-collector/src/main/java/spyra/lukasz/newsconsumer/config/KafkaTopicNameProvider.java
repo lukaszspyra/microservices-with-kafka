@@ -29,7 +29,7 @@ public class KafkaTopicNameProvider {
     return newsResponse;
   }
 
-  String jsonTopic() {
+  public String jsonTopic() {
     return jsonTopic;
   }
 

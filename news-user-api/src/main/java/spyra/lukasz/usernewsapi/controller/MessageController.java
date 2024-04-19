@@ -43,7 +43,7 @@ public class MessageController {
 
   @GetMapping("/news-json")
   public void publishJson() {
-    Article article = new Article("Some test Author", "Some test Title", "Exiting test news");
+    Article article = new Article("Some test Author", "Some test Title", "Exciting test news");
     publisher.publishJsonMessage(article);
   }
 
