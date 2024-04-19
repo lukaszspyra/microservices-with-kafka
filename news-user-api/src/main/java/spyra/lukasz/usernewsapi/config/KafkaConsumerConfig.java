@@ -1,6 +1,5 @@
 package spyra.lukasz.usernewsapi.config;
 
-import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,14 +12,19 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.support.serializer.DelegatingByTopicDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import spyra.lukasz.usernewsapi.dto.Article;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Configuration
 public class KafkaConsumerConfig {
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
+
+  @Value("${spring.kafka.topic.news.response}")
+  private String newsResponse;
 
   @Value("${spring.kafka.topic.json}")
   private String jsonTopic;
@@ -28,17 +32,25 @@ public class KafkaConsumerConfig {
   @Value("${spring.kafka.topic.avro}")
   private String avroTopic;
 
+  private final KafkaTopicNameProvider nameProvider;
+
+  public KafkaConsumerConfig(final KafkaTopicNameProvider nameProvider) {
+    this.nameProvider = nameProvider;
+  }
+
   public Map<String, Object> consumerConfig() {
     HashMap<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    props.put(ConsumerConfig.GROUP_ID_CONFIG, "message-group");
-    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    props.put(DelegatingByTopicDeserializer.VALUE_SERIALIZATION_TOPIC_CONFIG, jsonTopic + ":" + JsonDeserializer.class + ", " + avroTopic + ":" + KafkaAvroDeserializer.class);
+    props.put(ConsumerConfig.GROUP_ID_CONFIG, "message-group-2");
     return props;
   }
 
-  public ConsumerFactory<String, String> consumerFactory() {
-    return new DefaultKafkaConsumerFactory<>(consumerConfig());
+  public ConsumerFactory<String, Object> consumerFactory() {
+    return new DefaultKafkaConsumerFactory<>(consumerConfig(),
+        new StringDeserializer(),
+        new DelegatingByTopicDeserializer(Map.of(
+            Pattern.compile(nameProvider.jsonTopic()), new JsonDeserializer<Article>()),
+            new StringDeserializer()));  // default
   }
 
   @Bean
