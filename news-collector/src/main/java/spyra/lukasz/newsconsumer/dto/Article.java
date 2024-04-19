@@ -1,5 +1,7 @@
 package spyra.lukasz.newsconsumer.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
@@ -9,16 +11,18 @@ public class Article {
   public String title;
   public News news;
 
-  public Article(final String author, final String title, String content) {
+  @JsonCreator
+  public Article(@JsonProperty("author")final String author, @JsonProperty("title")final String title, @JsonProperty("news")News news) {
     this.author = author;
     this.title = title;
-    news = new News(content);
+    this.news = news;
   }
 
   public static class News {
     public final String content;
 
-    News(final String content) {
+    @JsonCreator
+    News(@JsonProperty("content")final String content) {
       this.content = content;
     }
 
