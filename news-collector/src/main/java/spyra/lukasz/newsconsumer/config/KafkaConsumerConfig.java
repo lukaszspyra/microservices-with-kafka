@@ -10,28 +10,42 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.kafka.support.serializer.DelegatingByTopicDeserializer;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
+import spyra.lukasz.newsconsumer.dto.Article;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Configuration
 public class  KafkaConsumerConfig {
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
 
+  private final KafkaTopicNameProvider nameProvider;
+
+  public KafkaConsumerConfig(final KafkaTopicNameProvider nameProvider) {
+    this.nameProvider = nameProvider;
+  }
+
   public Map<String, Object> consumerConfig() {
     HashMap<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     props.put(ConsumerConfig.GROUP_ID_CONFIG, "message-group");
-    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+    props.put(JsonDeserializer.TYPE_MAPPINGS, "ArticleDTO:spyra.lukasz.newsconsumer.dto.Article");
+    props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
     return props;
   }
 
-  @Bean
-  public ConsumerFactory<String, String> consumerFactory() {
-    return new DefaultKafkaConsumerFactory<>(consumerConfig());
+  public ConsumerFactory<String, Object> consumerFactory() {
+    JsonDeserializer<Article> jsonDeserializer = new JsonDeserializer<>(Article.class);
+    return new DefaultKafkaConsumerFactory<>(consumerConfig(),
+        new StringDeserializer(),
+        new DelegatingByTopicDeserializer(Map.of(
+            Pattern.compile(nameProvider.jsonTopic()), jsonDeserializer),
+            new StringDeserializer()));  // default
   }
 
   @Bean
