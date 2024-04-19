@@ -1,6 +1,5 @@
 package spyra.lukasz.usernewsapi.config;
 
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,36 +10,42 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.DelegatingByTopicSerializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import spyra.lukasz.usernewsapi.dto.Article;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Configuration
 public class KafkaProducerConfig {
+
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
 
-  @Value("${spring.kafka.topic.json}")
-  private String jsonTopic;
+  private final KafkaTopicNameProvider nameProvider;
 
-  @Value("${spring.kafka.topic.avro}")
-  private String avroTopic;
+  public KafkaProducerConfig(final KafkaTopicNameProvider nameProvider) {
+    this.nameProvider = nameProvider;
+  }
 
-  public ProducerFactory<String, String> producerFactory() {
-    return new DefaultKafkaProducerFactory<>(producerConfig());
+
+  @Bean
+  public KafkaTemplate<String, Object> kafkaTemplate() {
+    return new KafkaTemplate<>(producerFactory());
+  }
+
+  public ProducerFactory<String, Object> producerFactory() {
+    return new DefaultKafkaProducerFactory<>(producerConfig(),
+        new StringSerializer(),
+        new DelegatingByTopicSerializer(Map.of(
+            Pattern.compile(nameProvider.jsonTopic()), new JsonSerializer<Article>()),
+            new StringSerializer()));  // default;
   }
 
   public Map<String, Object> producerConfig() {
     Map<String, Object> props = new HashMap<>();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-    props.put(DelegatingByTopicSerializer.VALUE_SERIALIZATION_TOPIC_CONFIG, jsonTopic + ":" + JsonSerializer.class + ", " + avroTopic + ":" + KafkaAvroSerializer.class);
     return props;
-  }
-
-  @Bean
-  public KafkaTemplate<String, String> kafkaTemplate() {
-    return new KafkaTemplate<>(producerFactory());
   }
 
 }

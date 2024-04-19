@@ -9,19 +9,19 @@ import spyra.lukasz.usernewsapi.repository.NewsRepository;
 
 @Service
 public class MessageRequestService implements MessageService {
-  private final KafkaTemplate<String, String> kafkaTemplate;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
   private final NewsRepository newsRepository;
 
   private final KafkaTopicNameProvider topicNameProvider;
 
-  public MessageRequestService(KafkaTemplate<String, String> kafkaTemplate, NewsRepository newsRepository, final KafkaTopicNameProvider topicNameProvider) {
+  public MessageRequestService(KafkaTemplate<String, Object> kafkaTemplate, NewsRepository newsRepository, final KafkaTopicNameProvider topicNameProvider) {
     this.kafkaTemplate = kafkaTemplate;
     this.newsRepository = newsRepository;
     this.topicNameProvider = topicNameProvider;
   }
 
   public Mono<Void> publishToCollectNews(final String date) {
-    ProducerRecord<String, String> record = new ProducerRecord<>(topicNameProvider.newsRequest(), null, date);
+    ProducerRecord<String, Object> record = new ProducerRecord<>(topicNameProvider.newsRequest(), null, date);
     System.out.printf("Pushing message to KAFKA topic %s: %s%n", topicNameProvider.newsRequest(), date);
     return Mono.fromFuture(kafkaTemplate.send(record))
         .then();
