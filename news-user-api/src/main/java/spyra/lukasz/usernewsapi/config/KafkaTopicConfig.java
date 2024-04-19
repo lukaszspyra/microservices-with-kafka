@@ -24,4 +24,9 @@ public class KafkaTopicConfig {
     return TopicBuilder.name(topicNameProvider.newsRequest()).replicas(1).partitions(3).build();
   }
 
+  @Bean
+  public NewTopic newsJsonTopic() {
+    return TopicBuilder.name(topicNameProvider.jsonTopic()).replicas(1).partitions(3).build();
+  }
+
 }
