@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class Article {
 
-  private String author;
-  private String title;
-  private News news;
+  public String author;
+  public String title;
+  public News news;
 
   public Article(final String author, final String title, String content) {
     this.author = author;
@@ -15,8 +15,8 @@ public class Article {
     news = new News(content);
   }
 
-  private static class News {
-    private final String content;
+  public static class News {
+    public final String content;
 
     News(final String content) {
       this.content = content;

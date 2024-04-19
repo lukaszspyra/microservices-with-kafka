@@ -2,9 +2,11 @@ package spyra.lukasz.usernewsapi.service;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
 import spyra.lukasz.usernewsapi.config.KafkaTopicNameProvider;
 import spyra.lukasz.usernewsapi.dto.Article;
 
+@Service
 public class JsonPublisher {
 
   private final KafkaTemplate<String, Article> kafkaTemplate;

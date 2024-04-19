@@ -12,11 +12,18 @@ public class KafkaTopicNameProvider {
   @Value("${spring.kafka.topic.news.request}")
   private String newsRequest;
 
+  @Value("${spring.kafka.topic.news.response}")
+  private String newsResponse;
+
   @Value("${spring.kafka.topic.json}")
   private String jsonTopic;
 
   public String newsRequest() {
     return newsRequest;
+  }
+
+  public String newsResponse() {
+    return newsResponse;
   }
 
   public String jsonTopic() {
