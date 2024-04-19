@@ -45,6 +45,7 @@ public class KafkaProducerConfig {
   public Map<String, Object> producerConfig() {
     Map<String, Object> props = new HashMap<>();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put(JsonSerializer.TYPE_MAPPINGS, "ArticleDTO:spyra.lukasz.usernewsapi.dto.Article");
     return props;
   }
 
