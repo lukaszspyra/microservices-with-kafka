@@ -33,7 +33,7 @@ public class KafkaTopicNameProvider {
     return jsonTopic;
   }
 
-  String avroTopic() {
+  public String avroTopic() {
     return avroTopic;
   }
 

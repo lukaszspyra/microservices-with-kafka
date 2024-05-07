@@ -42,7 +42,7 @@
                         <configuration>
                             <sourceDirectory>${project.basedir}/src/main/java/spyra/lukasz/newsconsumer/dto/avro
                             </sourceDirectory>
-                            <outputDirectory>${project.basedir}/src/main/java/spyra/lukasz/newsconsumer/dto/avro
+                            <outputDirectory>${project.basedir}/src/main/java
                             </outputDirectory>
                         </configuration>
                     </execution>

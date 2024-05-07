@@ -5,10 +5,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MessagePublisher implements MessageService {
+public class StringMessagePublisher implements MessageService {
   private final KafkaTemplate<String, String> kafkaTemplate;
 
-  public MessagePublisher(final KafkaTemplate<String, String> kafkaTemplate) {
+  public StringMessagePublisher(final KafkaTemplate<String, String> kafkaTemplate) {
     this.kafkaTemplate = kafkaTemplate;
   }
 
