@@ -1,7 +1,10 @@
 package spyra.lukasz.newsconsumer.service;
 
-import reactor.core.publisher.Mono;
+import spyra.lukasz.newsconsumer.dto.avro.AvroArticleModel;
 
 public interface MessageService {
-  void publishResponseMessage(final String topic, final String date, final String body);
+  void publishStringResponseMessage(final String date, final String body);
+
+  void publishAvroResponseMessage(final AvroArticleModel article);
+
 }
