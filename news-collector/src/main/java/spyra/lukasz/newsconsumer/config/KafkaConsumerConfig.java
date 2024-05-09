@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @Configuration
-public class  KafkaConsumerConfig {
+public class KafkaConsumerConfig {
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
 
@@ -33,9 +33,9 @@ public class  KafkaConsumerConfig {
     HashMap<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     props.put(ConsumerConfig.GROUP_ID_CONFIG, "message-group");
+    //config for json deserialization - definition of DTO class location
     props.put(JsonDeserializer.TYPE_MAPPINGS, "ArticleDTO:spyra.lukasz.newsconsumer.dto.Article");
     props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-
     return props;
   }
 
@@ -45,6 +45,7 @@ public class  KafkaConsumerConfig {
         new StringDeserializer(),
         new DelegatingByTopicDeserializer(Map.of(
             Pattern.compile(nameProvider.jsonTopic()), jsonDeserializer),
+            //example of delegating deserializer choice depending on topic name: Pattern.compile(nameProvider.avroTopic()), new KafkaAvroDeserializer()),
             new StringDeserializer()));  // default
   }
 

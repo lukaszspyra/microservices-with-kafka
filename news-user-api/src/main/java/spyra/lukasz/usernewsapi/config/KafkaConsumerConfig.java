@@ -1,5 +1,7 @@
 package spyra.lukasz.usernewsapi.config;
 
+import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +13,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.support.serializer.DelegatingByTopicDeserializer;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-import spyra.lukasz.usernewsapi.dto.Article;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +23,8 @@ public class KafkaConsumerConfig {
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
 
-  @Value("${spring.kafka.topic.news.response}")
-  private String newsResponse;
-
-  @Value("${spring.kafka.topic.json}")
-  private String jsonTopic;
-
-  @Value("${spring.kafka.topic.avro}")
-  private String avroTopic;
+  @Value("${spring.kafka.schema-registry-servers}")
+  private String schemaRegistryServers;
 
   private final KafkaTopicNameProvider nameProvider;
 
@@ -42,6 +36,10 @@ public class KafkaConsumerConfig {
     HashMap<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     props.put(ConsumerConfig.GROUP_ID_CONFIG, "message-group-2");
+    //We set value to true to tell Kafka to use the generated version of generated object. Otherwise, it would deserialize
+    // into org.apache.avro.generic.GenericRecord instead of our generated object, which is a SpecificRecord.
+    props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
+    props.put("value.converter.schema.registry.url", schemaRegistryServers);
     return props;
   }
 
@@ -49,7 +47,8 @@ public class KafkaConsumerConfig {
     return new DefaultKafkaConsumerFactory<>(consumerConfig(),
         new StringDeserializer(),
         new DelegatingByTopicDeserializer(Map.of(
-            Pattern.compile(nameProvider.jsonTopic()), new JsonDeserializer<Article>()),
+            Pattern.compile(nameProvider.avroTopic()), new KafkaAvroDeserializer()),
+            //example of delegating deserializer choice depending on topic name: Pattern.compile(nameProvider.jsonTopic()), jsonDeserializer),
             new StringDeserializer()));  // default
   }
 

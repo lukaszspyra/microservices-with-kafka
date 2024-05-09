@@ -18,6 +18,9 @@ public class KafkaTopicNameProvider {
   @Value("${spring.kafka.topic.json}")
   private String jsonTopic;
 
+  @Value("${spring.kafka.topic.avro}")
+  private String avroTopic;
+
   public String newsRequest() {
     return newsRequest;
   }
@@ -28,6 +31,10 @@ public class KafkaTopicNameProvider {
 
   public String jsonTopic() {
     return jsonTopic;
+  }
+
+  public String avroTopic() {
+    return avroTopic;
   }
 
 }
