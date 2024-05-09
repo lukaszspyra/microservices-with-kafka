@@ -1,0 +1,28 @@
+{
+  "namespace": "spyra.lukasz.usernewsapi.dto.avro",
+  "type": "record",
+  "name": "AvroArticleModel",
+  "fields": [
+    {
+      "name": "author",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "news",
+      "type": {
+        "type": "record",
+        "name": "AvroNewsModel",
+        "fields": [
+          {
+            "name": "content",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ]
+}
