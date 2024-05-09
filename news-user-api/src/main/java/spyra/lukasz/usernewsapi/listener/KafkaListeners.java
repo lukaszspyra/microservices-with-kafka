@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import spyra.lukasz.usernewsapi.config.KafkaTopicNameProvider;
+import spyra.lukasz.usernewsapi.dto.avro.AvroArticleModel;
 import spyra.lukasz.usernewsapi.repository.NewsRepository;
 
 @Component
@@ -24,7 +25,7 @@ public class KafkaListeners {
 
 
   @KafkaListener(topics = {"#{kafkaTopicNameProvider.newsResponse()}"}, groupId = "message-group-2")
-  void newsResponseListener(ConsumerRecord<String, String> consumerRecord) {
+  void newsStringResponseListener(ConsumerRecord<String, String> consumerRecord) {
     System.out.printf("KAFKA response listener received: %s%n", consumerRecord.key());
     try {
       newsRepository.saveNews(consumerRecord.key(), consumerRecord.value())
@@ -38,6 +39,11 @@ public class KafkaListeners {
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @KafkaListener(topics = {"#{kafkaTopicNameProvider.avroTopic()}"}, groupId = "message-group-2")
+  void newsAvroResponseListener(AvroArticleModel article) {
+    System.out.printf("KAFKA avro listener received: %s%n", article);
   }
 
 }

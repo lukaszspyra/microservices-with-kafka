@@ -36,6 +36,7 @@ public class KafkaProducerConfig {
         new StringSerializer(),
         new DelegatingByTopicSerializer(Map.of(
             Pattern.compile(nameProvider.avroTopic()), new KafkaAvroSerializer()),
+           // example of another kind of topic: Pattern.compile(nameProvider.jsonTopic()), new JsonSerializer<Article>()
             new StringSerializer()));  // default;
   }
 

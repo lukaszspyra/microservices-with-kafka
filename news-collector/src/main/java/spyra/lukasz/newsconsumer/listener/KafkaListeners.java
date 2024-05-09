@@ -17,14 +17,10 @@ public class KafkaListeners {
 
   private final MessageService messageService;
 
-  private final KafkaTopicNameProvider kafkaTopicNameProvider;
-
   public KafkaListeners(final WebClientService webClientService, final MessageService messageService, final KafkaTopicNameProvider kafkaTopicNameProvider) {
     this.webClientService = webClientService;
     this.messageService = messageService;
-    this.kafkaTopicNameProvider = kafkaTopicNameProvider;
   }
-
 
   @KafkaListener(topics = {"#{kafkaTopicNameProvider.jsonTopic()}"}, groupId = "message-group")
   void newsJsonListener(Article article) {
@@ -40,7 +36,7 @@ public class KafkaListeners {
       HttpStatus status = (HttpStatus) response.getStatusCode();
       if (status.equals(HttpStatus.OK)) {
         System.out.println("Data successfully fetched from external API, publishing to string response topic");
-        messageService.publishResponseMessage(kafkaTopicNameProvider.newsResponse(), date, response.getBody());
+        messageService.publishStringResponseMessage(date, response.getBody());
       } else {
         System.out.println("Data fetch failed");
       }
