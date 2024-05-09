@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import spyra.lukasz.newsconsumer.config.KafkaTopicNameProvider;
 import spyra.lukasz.newsconsumer.dto.Article;
+import spyra.lukasz.newsconsumer.dto.avro.AvroArticleModel;
+import spyra.lukasz.newsconsumer.dto.avro.AvroNewsModel;
 import spyra.lukasz.newsconsumer.service.MessageService;
 import spyra.lukasz.newsconsumer.service.WebClientService;
 
@@ -25,6 +27,7 @@ public class KafkaListeners {
   @KafkaListener(topics = {"#{kafkaTopicNameProvider.jsonTopic()}"}, groupId = "message-group")
   void newsJsonListener(Article article) {
     System.out.printf("KAFKA json listener received: %s%n", article);
+    messageService.publishAvroResponseMessage(AvroArticleModel.newBuilder().setAuthor(article.author).setTitle(article.title).setNews(new AvroNewsModel(article.news.content)).build());
   }
 
   @KafkaListener(topics = {"#{kafkaTopicNameProvider.newsRequest()}"}, groupId = "message-group")
