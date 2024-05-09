@@ -20,7 +20,15 @@ public class JsonPublisher {
   public void publishJsonMessage(final Article article) {
     ProducerRecord<String, Object> record = new ProducerRecord<>(topicNameProvider.jsonTopic(), article);
     System.out.printf("Pushing message to KAFKA topic %s: %s%n", topicNameProvider.jsonTopic(), article.getTitle());
-    kafkaTemplate.send(record);
+    kafkaTemplate.send(record).whenComplete(((result, ex) -> {
+      if (ex == null) {
+        System.out.printf("Pushed message %s, to KAFKA topic %s%n",
+            result.getProducerRecord().value(),
+            result.getRecordMetadata().topic());
+      } else {
+        System.out.printf("Unable to send message to KAFKA topic %s, due to: %s%n", record.topic(), ex.getMessage());
+      }
+    }));
   }
 
 }

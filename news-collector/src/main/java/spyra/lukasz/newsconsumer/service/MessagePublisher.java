@@ -19,17 +19,31 @@ public class MessagePublisher implements MessageService {
   @Override
   public void publishStringResponseMessage(final String date, final String body) {
     ProducerRecord<String, Object> record = new ProducerRecord<>(topicNameProvider.newsResponse(), date, body);
-    System.out.printf("Pushing message to KAFKA topic %s: %s%n", record.topic(), body);
-    kafkaTemplate.send(record);
-    System.out.printf("Pushed message to KAFKA topic %s: %s%n", record.topic(), date);
+    System.out.printf("Pushing message to KAFKA topic %s: %s%n", record.topic(), record.value());
+    kafkaTemplate.send(record).whenComplete(((result, ex) -> {
+      if (ex == null) {
+        System.out.printf("Pushed message %s, to KAFKA topic %s, dated: %s%n",
+            result.getProducerRecord().value(),
+            result.getRecordMetadata().topic(), date);
+      } else {
+        System.out.printf("Unable to send message to KAFKA topic %s, due to: %s%n", record.topic(), ex.getMessage());
+      }
+    }));
   }
 
   @Override
   public void publishAvroResponseMessage(final AvroArticleModel article) {
     ProducerRecord<String, Object> record = new ProducerRecord<>(topicNameProvider.avroTopic(), article);
-    System.out.printf("Pushing message to KAFKA topic %s: %s%n", record.topic(), article.getTitle());
-    kafkaTemplate.send(record);
-    System.out.printf("Pushed message to KAFKA topic %s: %s%n", record.topic(), record.value());
+    System.out.printf("Pushing message to KAFKA topic %s: %s%n", record.topic(), record.value());
+    kafkaTemplate.send(record).whenComplete(((result, ex) -> {
+      if (ex == null) {
+        System.out.printf("Pushed message %s, to KAFKA topic %s%n",
+            result.getProducerRecord().value(),
+            result.getRecordMetadata().topic());
+      } else {
+        System.out.printf("Unable to send message to KAFKA topic %s, due to: %s%n", record.topic(), ex.getMessage());
+      }
+    }));
   }
 
 }
