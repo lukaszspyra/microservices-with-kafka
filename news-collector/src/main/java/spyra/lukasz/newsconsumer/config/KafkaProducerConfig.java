@@ -20,6 +20,9 @@ public class KafkaProducerConfig {
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
 
+  @Value("${spring.kafka.schema-registry-servers}")
+  private String schemaRegistryServers;
+
   private final KafkaTopicNameProvider nameProvider;
 
   public KafkaProducerConfig(final KafkaTopicNameProvider nameProvider) {
@@ -55,6 +58,7 @@ public class KafkaProducerConfig {
   public Map<String, Object> producerConfig() {
     Map<String, Object> props = new HashMap<>();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put("schema.registry.url", schemaRegistryServers);
     return props;
   }
 
