@@ -39,7 +39,9 @@ public class KafkaConsumerConfig {
     //We set value to true to tell Kafka to use the generated version of generated object. Otherwise, it would deserialize
     // into org.apache.avro.generic.GenericRecord instead of our generated object, which is a SpecificRecord.
     props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
+    props.put("key.converter.schema.registry.url", schemaRegistryServers);
     props.put("value.converter.schema.registry.url", schemaRegistryServers);
+    props.put("schema.registry.url", schemaRegistryServers);
     return props;
   }
 

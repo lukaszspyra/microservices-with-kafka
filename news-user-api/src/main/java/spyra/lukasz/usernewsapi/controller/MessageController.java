@@ -14,6 +14,8 @@ import spyra.lukasz.usernewsapi.dto.response.DataResponse;
 import spyra.lukasz.usernewsapi.service.JsonPublisher;
 import spyra.lukasz.usernewsapi.service.MessageService;
 
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @RequestMapping
 public class MessageController {
@@ -46,8 +48,12 @@ public class MessageController {
   }
 
   @PostMapping("/news-json")
-  public void publishJson(@RequestBody Article article) {
-    publisher.publishJsonMessage(article);
+  public ResponseEntity<DataResponse<Object>> publishJson(@RequestBody Article article) {
+    final CompletableFuture<Object> result = publisher.publishJsonMessage(article);
+    return result != null? ResponseEntity.status(HttpStatus.OK).body(new DataResponse<>
+            ("Publish json message successful", true, result)) :
+        ResponseEntity.status(HttpStatus.NO_CONTENT).body(new DataResponse<>
+            ("Exception during publishing Json message", true, null));
   }
 
 }
