@@ -3,8 +3,9 @@ package spyra.lukasz.newsconsumer.service;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import schema.avro.AvroArticleModel;
 import spyra.lukasz.newsconsumer.config.KafkaTopicNameProvider;
-import spyra.lukasz.newsconsumer.dto.avro.AvroArticleModel;
+
 
 @Service
 public class MessagePublisher implements MessageService {

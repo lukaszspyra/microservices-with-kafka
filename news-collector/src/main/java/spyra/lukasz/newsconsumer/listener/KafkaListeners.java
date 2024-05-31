@@ -5,10 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import schema.avro.AvroNewsModel;
+import schema.avro.AvroArticleModel;
 import spyra.lukasz.newsconsumer.config.KafkaTopicNameProvider;
 import spyra.lukasz.newsconsumer.dto.Article;
-import spyra.lukasz.newsconsumer.dto.avro.AvroArticleModel;
-import spyra.lukasz.newsconsumer.dto.avro.AvroNewsModel;
 import spyra.lukasz.newsconsumer.service.MessageService;
 import spyra.lukasz.newsconsumer.service.WebClientService;
 
