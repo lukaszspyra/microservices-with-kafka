@@ -12,21 +12,21 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfig {
 
-  @Autowired
   private final KafkaTopicNameProvider topicNameProvider;
 
+  @Autowired
   public KafkaTopicConfig(final KafkaTopicNameProvider topicNameProvider) {
     this.topicNameProvider = topicNameProvider;
   }
 
   @Bean
   public NewTopic newsRequestTopic() {
-    return TopicBuilder.name(topicNameProvider.newsRequest()).replicas(1).partitions(3).build();
+    return TopicBuilder.name(topicNameProvider.newsRequest()).replicas(3).partitions(3).build();
   }
 
   @Bean
   public NewTopic newsJsonTopic() {
-    return TopicBuilder.name(topicNameProvider.jsonTopic()).replicas(1).partitions(3).build();
+    return TopicBuilder.name(topicNameProvider.jsonTopic()).replicas(3).partitions(3).build();
   }
 
 }
