@@ -46,9 +46,9 @@
                             <goal>schema</goal>
                         </goals>
                         <configuration>
-                            <sourceDirectory>${project.basedir}/src/main/java/spyra/lukasz/usernewsapi/dto/avro
+                            <sourceDirectory>${project.basedir}/src/main/resources/avro
                             </sourceDirectory>
-                            <outputDirectory>${project.basedir}/src/main/java
+                            <outputDirectory>${project.build.directory}/generated-sources/avro
                             </outputDirectory>
                         </configuration>
                     </execution>

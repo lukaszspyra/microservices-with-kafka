@@ -1,7 +1,7 @@
 {
-  "namespace": "spyra.lukasz.usernewsapi.dto.avro",
   "type": "record",
   "name": "AvroArticleModel",
+  "namespace": "schema.avro",
   "fields": [
     {
       "name": "author",
